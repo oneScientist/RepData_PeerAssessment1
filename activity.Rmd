@@ -1,0 +1,71 @@
+---
+title: "Activity report"
+author: "oneScientist"
+date: "20 décembre 2015"
+output: html_document
+---
+
+### Loading and preprocessing the data
+
+First, load the data from the "activity.csv" file.
+
+```{r}
+activity <- read.csv("activity.csv")
+```
+
+No nead for preprocessing the data.
+
+### What is mean total number of steps taken per day?
+
+1. The total number of steps taken per day
+
+```{r}
+total_number_steps_per_day <- aggregate( steps~date, activity, sum)
+
+hist(total_number_steps_per_day$steps, main = "The total number of steps taken per day", xlab = "The total number of steps taken per day", ylab = "value")
+```
+
+2. The mean and median of the total number of steps taken per day
+
+The mean of the total number of steps taken per day
+
+```{r}
+mean_steps <- mean(total_number_steps_per_day$steps)
+mean_steps
+```
+
+The median of the total number of steps taken per day
+
+```{r}
+median_steps <- median(total_number_steps_per_day$steps)
+median_steps
+```
+
+### What is the average daily activity pattern?
+
+1. the number of steps taken per interval averaged across all days
+
+First, we compute the number of steps average per interval across all days
+
+```{r}
+activityAverageInDay <- aggregate(steps ~ interval, activity, mean)
+```
+
+```{r}
+plot.ts(activityAverageInDay$interval, activityAverageInDay$steps, main = "the number of steps taken per interval averaged across all days", xlab = "Interval", ylab = "Number of Steps Average")
+```
+
+2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r}
+activityAverageInDay[which.max(activityAverageInDay$steps),]$interval
+```
+
+### Imputing missing values
+
+1. Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
+
+```{r}
+sum(complete.cases(activity) != TRUE)
+```
+
