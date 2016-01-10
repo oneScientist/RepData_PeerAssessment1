@@ -1,0 +1,55 @@
+---
+title: "Reproducible Research - Assignement 1"
+author: "oneScientist"
+date: "10 janvier 2016"
+output: html_document
+---
+
+## Read data
+
+```{r}
+dat <- read.csv("activity.csv")
+```
+
+
+## Mean total number of steps taken per day
+
+The mean total number of steps taken per day
+
+```{r}
+meanStepsPerDay <- tapply(dat$steps, dat$date, function(x) mean(x, na.rm = TRUE))
+meanStepsPerDay
+
+hist(meanStepsPerDay, main = "Mean steps taken per day", xlab = "Number of steps", ylim = c(0,20), col = "green")
+```
+
+The median total number of steps taken per day
+
+```{r}
+medianStepsPerDay <- tapply(dat$steps, dat$date, function(x) median(x, na.rm = TRUE))
+medianStepsPerDay
+```
+
+## Average daily activity pattern
+
+```{r}
+meanStepsPerInterval <- tapply(dat$steps, dat$interval, function(x) mean(x, na.rm = TRUE))
+
+plot(cbind(as.numeric(names(meanStepsPerInterval)), meanStepsPerInterval), type = "l", main = "Mean of steps per interval taken all days", xlab = "Intervals", ylab = "Mean of steps per interval")
+```
+
+
+## Imputing missing values
+
+Calculate and report the total number of missing values in the dataset
+
+```{r}
+sum(!complete.cases(dat))
+```
+
+## Comparing activity patterns between weekdays and weekends
+
+
+```{r}
+
+```
