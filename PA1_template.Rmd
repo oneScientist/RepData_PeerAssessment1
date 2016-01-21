@@ -1,9 +1,16 @@
 ---
 title: "Reproducible Research - Assignement 1"
 author: "oneScientist"
-date: "10 janvier 2016"
+date: "21 janvier 2016"
 output: html_document
 ---
+
+## Load needed libraries
+
+```{r}
+library(ggplot2)
+library(knitr)
+```
 
 ## Read data
 
@@ -14,20 +21,26 @@ dat <- read.csv("activity.csv")
 
 ## Mean total number of steps taken per day
 
-The mean total number of steps taken per day
+The total number of steps taken per day
 
 ```{r}
-meanStepsPerDay <- tapply(dat$steps, dat$date, function(x) mean(x, na.rm = TRUE))
-meanStepsPerDay
+totalNbStepsPerDay <- tapply(dat$steps, dat$date, function(x) sum(x, na.rm = TRUE))
+totalNbStepsPerDay
 
-hist(meanStepsPerDay, main = "Mean steps taken per day", xlab = "Number of steps", ylim = c(0,20), col = "green")
+hist(totalNbStepsPerDay, main = "Total number of steps taken per day", xlab = "Number of steps", col = "green")
 ```
 
-The median total number of steps taken per day
+The mean of the total number of steps taken per day
 
 ```{r}
-medianStepsPerDay <- tapply(dat$steps, dat$date, function(x) median(x, na.rm = TRUE))
-medianStepsPerDay
+mean(totalNbStepsPerDay)
+```
+
+
+The median of the total number of steps taken per day
+
+```{r}
+median(totalNbStepsPerDay)
 ```
 
 ## Average daily activity pattern
@@ -38,6 +51,14 @@ meanStepsPerInterval <- tapply(dat$steps, dat$interval, function(x) mean(x, na.r
 plot(cbind(as.numeric(names(meanStepsPerInterval)), meanStepsPerInterval), type = "l", main = "Mean of steps per interval taken all days", xlab = "Intervals", ylab = "Mean of steps per interval")
 ```
 
+The interval containing the maximum number of steps 
+
+```{r}
+which.max(meanStepsPerInterval)
+```
+
+The interval is 835.
+
 
 ## Imputing missing values
 
@@ -47,9 +68,62 @@ Calculate and report the total number of missing values in the dataset
 sum(!complete.cases(dat))
 ```
 
+For missing values, we compute the mean of the number of steps per interval.
+For each missing number of steps, we replace the "NA" value by the mean for the same interval.
+
+So, first, we compute the indices of the NAs steps values.
+
+For each NA steps value, we replace with the average number of steps for the same interval. 
+
+```{r}
+dataWithoutNAs <- dat
+naSteps <- which(is.na(dataWithoutNAs$steps))
+
+for(i in naSteps){
+    dataWithoutNAs[i,"steps"] <- meanStepsPerInterval[as.character(dat[i,"interval"])]
+}
+```
+
+
+The total number of steps taken per day after imputing NA values
+
+```{r}
+totalNbStepsPerDayNoNA <- tapply(dataWithoutNAs$steps, dataWithoutNAs$date, function(x) sum(x, na.rm = TRUE))
+
+hist(totalNbStepsPerDayNoNA, main = "Total number of steps taken per day after imputing NAs values", xlab = "Number of steps", col = "green")
+```
+
+The mean of the total number of steps taken per day after imputing NA values
+
+```{r}
+mean(totalNbStepsPerDayNoNA)
+```
+
+
+The median of the total number of steps taken per day after imputing NA values
+
+```{r}
+median(totalNbStepsPerDayNoNA)
+```
+
+
 ## Comparing activity patterns between weekdays and weekends
 
 
 ```{r}
+# Create the new variable for weekend day and week day
+dataWithoutNAs$weekday <- weekdays(as.Date(dataWithoutNAs$date, "%Y-%m-%d"))
+dataWithoutNAs <- transform(dataWithoutNAs, weekday = ifelse(weekday %in% c("samedi", "dimanche", "saturday", "sunday"), "weekend", "weekday"))
+   
+stepsByIntervalMean2 <- aggregate(steps ~ interval + weekday, data=dataWithoutNAs, mean)
+colnames(stepsByIntervalMean2) <- c("Interval","weekend","avgSteps")
 
+
+plot <- ggplot(stepsByIntervalMean2, aes(Interval, avgSteps)) + 
+    geom_line(col = "blue") + 
+    facet_grid(weekend ~ .) +
+    xlab("Interval") + 
+    ylab("Average Steps in Interval")
+
+plot
 ```

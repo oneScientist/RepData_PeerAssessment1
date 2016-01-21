@@ -1,9 +1,17 @@
 ---
 title: "Reproducible Research - Assignement 1"
 author: "oneScientist"
-date: "10 janvier 2016"
+date: "21 janvier 2016"
 output: html_document
 ---
+
+## Load needed libraries
+
+
+```r
+library(ggplot2)
+library(knitr)
+```
 
 ## Read data
 
@@ -15,76 +23,66 @@ dat <- read.csv("activity.csv")
 
 ## Mean total number of steps taken per day
 
-The mean total number of steps taken per day
+The total number of steps taken per day
 
 
 ```r
-meanStepsPerDay <- tapply(dat$steps, dat$date, function(x) mean(x, na.rm = TRUE))
-meanStepsPerDay
+totalNbStepsPerDay <- tapply(dat$steps, dat$date, function(x) sum(x, na.rm = TRUE))
+totalNbStepsPerDay
 ```
 
 ```
 ## 2012-10-01 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 
-##        NaN  0.4375000 39.4166667 42.0694444 46.1597222 53.5416667 
+##          0        126      11352      12116      13294      15420 
 ## 2012-10-07 2012-10-08 2012-10-09 2012-10-10 2012-10-11 2012-10-12 
-## 38.2465278        NaN 44.4826389 34.3750000 35.7777778 60.3541667 
+##      11015          0      12811       9900      10304      17382 
 ## 2012-10-13 2012-10-14 2012-10-15 2012-10-16 2012-10-17 2012-10-18 
-## 43.1458333 52.4236111 35.2048611 52.3750000 46.7083333 34.9166667 
+##      12426      15098      10139      15084      13452      10056 
 ## 2012-10-19 2012-10-20 2012-10-21 2012-10-22 2012-10-23 2012-10-24 
-## 41.0729167 36.0937500 30.6284722 46.7361111 30.9652778 29.0104167 
+##      11829      10395       8821      13460       8918       8355 
 ## 2012-10-25 2012-10-26 2012-10-27 2012-10-28 2012-10-29 2012-10-30 
-##  8.6527778 23.5347222 35.1354167 39.7847222 17.4236111 34.0937500 
+##       2492       6778      10119      11458       5018       9819 
 ## 2012-10-31 2012-11-01 2012-11-02 2012-11-03 2012-11-04 2012-11-05 
-## 53.5208333        NaN 36.8055556 36.7048611        NaN 36.2465278 
+##      15414          0      10600      10571          0      10439 
 ## 2012-11-06 2012-11-07 2012-11-08 2012-11-09 2012-11-10 2012-11-11 
-## 28.9375000 44.7326389 11.1770833        NaN        NaN 43.7777778 
+##       8334      12883       3219          0          0      12608 
 ## 2012-11-12 2012-11-13 2012-11-14 2012-11-15 2012-11-16 2012-11-17 
-## 37.3784722 25.4722222        NaN  0.1423611 18.8923611 49.7881944 
+##      10765       7336          0         41       5441      14339 
 ## 2012-11-18 2012-11-19 2012-11-20 2012-11-21 2012-11-22 2012-11-23 
-## 52.4652778 30.6979167 15.5277778 44.3993056 70.9270833 73.5902778 
+##      15110       8841       4472      12787      20427      21194 
 ## 2012-11-24 2012-11-25 2012-11-26 2012-11-27 2012-11-28 2012-11-29 
-## 50.2708333 41.0902778 38.7569444 47.3819444 35.3576389 24.4687500 
+##      14478      11834      11162      13646      10183       7047 
 ## 2012-11-30 
-##        NaN
+##          0
 ```
 
 ```r
-hist(meanStepsPerDay, main = "Mean steps taken per day", xlab = "Number of steps", ylim = c(0,20), col = "green")
+hist(totalNbStepsPerDay, main = "Total number of steps taken per day", xlab = "Number of steps", col = "green")
 ```
 
-![plot of chunk unnamed-chunk-2](figure/unnamed-chunk-2-1.png) 
+![plot of chunk unnamed-chunk-3](figure/unnamed-chunk-3-1.png) 
 
-The median total number of steps taken per day
+The mean of the total number of steps taken per day
 
 
 ```r
-medianStepsPerDay <- tapply(dat$steps, dat$date, function(x) median(x, na.rm = TRUE))
-medianStepsPerDay
+mean(totalNbStepsPerDay)
 ```
 
 ```
-## 2012-10-01 2012-10-02 2012-10-03 2012-10-04 2012-10-05 2012-10-06 
-##         NA          0          0          0          0          0 
-## 2012-10-07 2012-10-08 2012-10-09 2012-10-10 2012-10-11 2012-10-12 
-##          0         NA          0          0          0          0 
-## 2012-10-13 2012-10-14 2012-10-15 2012-10-16 2012-10-17 2012-10-18 
-##          0          0          0          0          0          0 
-## 2012-10-19 2012-10-20 2012-10-21 2012-10-22 2012-10-23 2012-10-24 
-##          0          0          0          0          0          0 
-## 2012-10-25 2012-10-26 2012-10-27 2012-10-28 2012-10-29 2012-10-30 
-##          0          0          0          0          0          0 
-## 2012-10-31 2012-11-01 2012-11-02 2012-11-03 2012-11-04 2012-11-05 
-##          0         NA          0          0         NA          0 
-## 2012-11-06 2012-11-07 2012-11-08 2012-11-09 2012-11-10 2012-11-11 
-##          0          0          0         NA         NA          0 
-## 2012-11-12 2012-11-13 2012-11-14 2012-11-15 2012-11-16 2012-11-17 
-##          0          0         NA          0          0          0 
-## 2012-11-18 2012-11-19 2012-11-20 2012-11-21 2012-11-22 2012-11-23 
-##          0          0          0          0          0          0 
-## 2012-11-24 2012-11-25 2012-11-26 2012-11-27 2012-11-28 2012-11-29 
-##          0          0          0          0          0          0 
-## 2012-11-30 
-##         NA
+## [1] 9354.23
+```
+
+
+The median of the total number of steps taken per day
+
+
+```r
+median(totalNbStepsPerDay)
+```
+
+```
+## [1] 10395
 ```
 
 ## Average daily activity pattern
@@ -96,7 +94,21 @@ meanStepsPerInterval <- tapply(dat$steps, dat$interval, function(x) mean(x, na.r
 plot(cbind(as.numeric(names(meanStepsPerInterval)), meanStepsPerInterval), type = "l", main = "Mean of steps per interval taken all days", xlab = "Intervals", ylab = "Mean of steps per interval")
 ```
 
-![plot of chunk unnamed-chunk-4](figure/unnamed-chunk-4-1.png) 
+![plot of chunk unnamed-chunk-6](figure/unnamed-chunk-6-1.png) 
+
+The interval containing the maximum number of steps 
+
+
+```r
+which.max(meanStepsPerInterval)
+```
+
+```
+## 835 
+## 104
+```
+
+The interval is 835.
 
 
 ## Imputing missing values
@@ -112,7 +124,79 @@ sum(!complete.cases(dat))
 ## [1] 2304
 ```
 
+For missing values, we compute the mean of the number of steps per interval.
+For each missing number of steps, we replace the "NA" value by the mean for the same interval.
+
+So, first, we compute the indices of the NAs steps values.
+
+For each NA steps value, we replace with the average number of steps for the same interval. 
+
+
+```r
+dataWithoutNAs <- dat
+naSteps <- which(is.na(dataWithoutNAs$steps))
+
+for(i in naSteps){
+    dataWithoutNAs[i,"steps"] <- meanStepsPerInterval[as.character(dat[i,"interval"])]
+}
+```
+
+
+The total number of steps taken per day after imputing NA values
+
+
+```r
+totalNbStepsPerDayNoNA <- tapply(dataWithoutNAs$steps, dataWithoutNAs$date, function(x) sum(x, na.rm = TRUE))
+
+hist(totalNbStepsPerDayNoNA, main = "Total number of steps taken per day after imputing NAs values", xlab = "Number of steps", col = "green")
+```
+
+![plot of chunk unnamed-chunk-10](figure/unnamed-chunk-10-1.png) 
+
+The mean of the total number of steps taken per day after imputing NA values
+
+
+```r
+mean(totalNbStepsPerDayNoNA)
+```
+
+```
+## [1] 10766.19
+```
+
+
+The median of the total number of steps taken per day after imputing NA values
+
+
+```r
+median(totalNbStepsPerDayNoNA)
+```
+
+```
+## [1] 10766.19
+```
+
+
 ## Comparing activity patterns between weekdays and weekends
 
 
 
+```r
+# Create the new variable for weekend day and week day
+dataWithoutNAs$weekday <- weekdays(as.Date(dataWithoutNAs$date, "%Y-%m-%d"))
+dataWithoutNAs <- transform(dataWithoutNAs, weekday = ifelse(weekday %in% c("samedi", "dimanche", "saturday", "sunday"), "weekend", "weekday"))
+   
+stepsByIntervalMean2 <- aggregate(steps ~ interval + weekday, data=dataWithoutNAs, mean)
+colnames(stepsByIntervalMean2) <- c("Interval","weekend","avgSteps")
+
+
+plot <- ggplot(stepsByIntervalMean2, aes(Interval, avgSteps)) + 
+    geom_line(col = "blue") + 
+    facet_grid(weekend ~ .) +
+    xlab("Interval") + 
+    ylab("Average Steps in Interval")
+
+plot
+```
+
+![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png) 
